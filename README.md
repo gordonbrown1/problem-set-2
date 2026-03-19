@@ -1,3 +1,5 @@
+Name: Gordon Brown
+
 PROBLEM SET #2: REGRESSION AND DECISION TREES
 
 Instructions: 
