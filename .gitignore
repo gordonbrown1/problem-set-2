@@ -1,0 +1,42 @@
+# Data files (CSV outputs)
+*.csv
+*.feather
+*.parquet
+
+# Plots and images
+*.png
+*.jpg
+*.jpeg
+*.svg
+*.pdf
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+.env
+ENV/
+
+# IDE files
+.vscode/
+.idea/
+.DS_Store
+
+# Data directory contents
+data/
+!data/.gitkeep
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Data directory contents
+data/
+!data/.gitkeep
