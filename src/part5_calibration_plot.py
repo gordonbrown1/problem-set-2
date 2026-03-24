@@ -29,8 +29,8 @@ def load_predictions():
     
     Returns:
         tuple: (lr_df, dt_df) where:
-            - lr_df: DataFrame with logistic regression predictions
-            - dt_df: DataFrame with decision tree predictions
+            lr_df: DataFrame with logistic regression predictions
+            dt_df: DataFrame with decision tree predictions
     """
     print("Loading predictions data-frames...")
     
@@ -60,12 +60,12 @@ def calibration_plot(y_true, y_prob, n_bins=5, title="Calibration Plot", save_pa
     Returns:
         tuple: (prob_true, bin_means) calibration curve values
     """
+
     # Calculate calibration values
     bin_means, prob_true = calibration_curve(y_true, y_prob, n_bins=n_bins)
     
     # Create the plot
     plt.figure(figsize=(8, 6))
-    #sns.set(style="whitegrid")
     sns.set_theme(style="whitegrid")
     
     # Plot the perfect calibration line (45-degree line)
@@ -110,6 +110,7 @@ def calculate_ppv_top50(df, pred_col='pred_lr'):
             - ppv (float): PPV for top 50
             - top_50_df (DataFrame): Top 50 highest risk individuals
     """
+
     # Sort by predicted probability (highest to lowest)
     df_sorted = df.sort_values(pred_col, ascending=False)
     
@@ -150,6 +151,7 @@ def print_comparison_results(lr_auc, dt_auc, lr_ppv, dt_ppv):
     Returns:
         bool: Whether both metrics agree on which model is better
     """
+
     print("\n" + "="*50)
     print("MODEL COMPARISON RESULTS")
     print("="*50)
@@ -216,11 +218,10 @@ def save_results_to_csv(lr_auc, dt_auc, lr_ppv, dt_ppv):
         lr_ppv (float): Logistic regression PPV for top 50
         dt_ppv (float): Decision tree PPV for top 50
     """
+
     results_df = pd.DataFrame({
         'Model': ['Logistic Regression', 'Decision Tree'],
-        'AUC': [lr_auc, dt_auc],
-        'PPV_Top50': [lr_ppv, dt_ppv]
-    })
+        'AUC': [lr_auc, dt_auc],'PPV_Top50': [lr_ppv, dt_ppv]})
     
     results_df.to_csv('./data/model_comparison.csv', index=False)
     print(f"\nSaved model comparison to ./data/model_comparison.csv\n")
@@ -230,6 +231,7 @@ def save_results_to_csv(lr_auc, dt_auc, lr_ppv, dt_ppv):
 def create_combined_calibration_plot(lr_df, dt_df):
     """
     Create a combined calibration plot comparing both models.
+    It displays the plot and saves it uder ./data/plot
     
     Parameters:
         lr_df: Logistic regression predictions dataframe
@@ -240,7 +242,7 @@ def create_combined_calibration_plot(lr_df, dt_df):
     print("="*50)
     
     plt.figure(figsize=(10, 8))
-    sns.set(style="whitegrid")
+    sns.set_theme(style="whitegrid")
     
     # Plot perfect calibration line
     plt.plot([0, 1], [0, 1], "k--", label="Perfect Calibration", linewidth=2)
@@ -289,25 +291,23 @@ def main():
         os.makedirs('./data/plots')
         print("Created ./data/plots directory to save plots")
     
-    # Step 1: Load predictions
+    # Load predictions
     lr_df, dt_df = load_predictions()
     
-    # Step 2: Create calibration plot for logistic regression
+    # Create calibration plot for logistic regression
     print("\n" + "="*50)
     print("CALIBRATION PLOT: LOGISTIC REGRESSION")
     print("="*50)
     
     lr_prob_true, lr_bin_means = calibration_plot(
-        y_true=lr_df['y'],
-        y_prob=lr_df['pred_lr'],
-        n_bins=5,
+        y_true=lr_df['y'],y_prob=lr_df['pred_lr'],n_bins=5,
         title="Calibration Plot - Logistic Regression",
         save_path='./data/plots/lr_calibration_plot.png',
-        show_plot=True
-    )
+        show_plot=True)
+    
     print(f"Logistic regression calibration points: {len(lr_prob_true)}")
     
-    # Step 3: Create calibration plot for decision tree
+    # Create calibration plot for decision tree
     print("\n" + "="*50)
     print("CALIBRATION PLOT: DECISION TREE")
     print("="*50)
@@ -322,14 +322,12 @@ def main():
     )
     print(f"Decision tree calibration points: {len(dt_prob_true)}")
     
-    # Step 4: Which model is more calibrated?
+    # Which model is more calibrated?
     print("\n" + "="*50)
     print("QUESTION: Which model is more calibrated?")
     print("="*50)
     
     # Calculate calibration error (mean absolute difference from perfect calibration)
-    # For perfect calibration, predicted probabilities should equal actual fractions
-    
     # For logistic regression
     lr_cal_error = np.mean(np.abs(lr_prob_true - lr_bin_means))
     print(f"\nLogistic Regression Calibration Error: {lr_cal_error:.4f}")
@@ -349,7 +347,7 @@ def main():
         better_calibrated = "Both models are equally calibrated"
         print(f"\nAnswer: {better_calibrated}")
     
-    # Step 5: Extra Credit - Calculate PPV for top 50
+    # Extra Credit - Calculate PPV for top 50
     print("\n" + "="*50)
     print("EXTRA CREDIT: PPV FOR TOP 50")
     print("="*50)
@@ -360,7 +358,7 @@ def main():
     print(f"\nLogistic Regression PPV (Top 50): {lr_ppv:.4f} ({lr_top50['y'].sum()}/{len(lr_top50)})")
     print(f"Decision Tree PPV (Top 50): {dt_ppv:.4f} ({dt_top50['y'].sum()}/{len(dt_top50)})")
     
-    # Step 6: Extra Credit - Calculate AUC
+    # Extra Credit - Calculate AUC
     print("\n" + "="*50)
     print("EXTRA CREDIT: AUC")
     print("="*50)
@@ -371,24 +369,24 @@ def main():
     print(f"\nLogistic Regression AUC: {lr_auc:.4f}")
     print(f"Decision Tree AUC: {dt_auc:.4f}")
     
-    # Step 7: Extra Credit - Do metrics agree?
+    # Extra Credit - Do metrics agree?
     agreement = print_comparison_results(lr_auc, dt_auc, lr_ppv, dt_ppv)
     
-    # Step 8: Save results to CSV
+    # Save results to CSV
     save_results_to_csv(lr_auc, dt_auc, lr_ppv, dt_ppv)
     
-    # Step 9: Create combined calibration plot (shows and saves)
+    # Create combined calibration plot (shows and saves)
     create_combined_calibration_plot(lr_df, dt_df)
     
-    # Step 10: Print summary
+    # Print summary
     print("\n" + "="*60)
     print("CALIBRATION AND MODEL COMPARISON COMPLETE")
     print("="*60)
     print("\nFiles saved to:")
-    print("  - ./data/plots/lr_calibration_plot.png")
-    print("  - ./data/plots/dt_calibration_plot.png")
-    print("  - ./data/plots/combined_calibration_plot.png")
-    print("  - ./data/model_comparison.csv\n")
+    print("  ./data/plots/lr_calibration_plot.png")
+    print("  ./data/plots/dt_calibration_plot.png")
+    print("  ./data/plots/combined_calibration_plot.png")
+    print("  ./data/model_comparison.csv\n")
     
     return lr_df, dt_df
 

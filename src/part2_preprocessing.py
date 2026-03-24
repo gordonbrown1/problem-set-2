@@ -48,9 +48,7 @@ def load_data():
 
 def merge_on_person_id(pred_universe_raw, arrest_events_raw):
     """
-    Perform a full outer join on 'person_id' as instructed by the professor.
-    
-    Note: This will create a Cartesian product - each person in pred_universe
+    Perform a full outer join on 'person_id'.
     will match with all their charges from arrest_events.
     
     Args:
@@ -77,7 +75,6 @@ def merge_on_person_id(pred_universe_raw, arrest_events_raw):
 def create_target_variable(df_arrests, arrest_events_raw):
     """
     Create target variable y: 1 if person was arrested for a felony in the 365 days AFTER arrest date.
-    
     For each arrest in df_arrests, check if the same person appears in arrest_events_raw
     with a felony charge between (arrest_date + 1 day) and (arrest_date + 365 days).
     
@@ -92,7 +89,7 @@ def create_target_variable(df_arrests, arrest_events_raw):
     print("CREATING TARGET VARIABLE: Felony rearrest within 365 days")
     print("="*60)
     
-    # Create a copy to avoid warnings
+    # Creating a copy to avoid warnings
     df = df_arrests.copy()
     
     # Initialize y column to 0
@@ -104,7 +101,7 @@ def create_target_variable(df_arrests, arrest_events_raw):
     
     # For each row in df_arrests
     for idx, row in df.iterrows():
-        # Only proceed if we have an arrest date from the universe table
+        # Only proceed if there is arrest date from the universe table
         if pd.notna(row['arrest_date_univ']):
             person_id = row['person_id']
             arrest_date = row['arrest_date_univ']
@@ -114,13 +111,11 @@ def create_target_variable(df_arrests, arrest_events_raw):
             end_date = arrest_date + timedelta(days=365)
             
             # Check if this person has any felony arrests in events within this window
-            # Note: Using 'charge_degree' instead of 'degree'
             person_felony_rearrests = events[
                 (events['person_id'] == person_id) &
                 (events['arrest_date_event'] >= start_date) &
                 (events['arrest_date_event'] <= end_date) &
-                (events['charge_degree'].str.lower() == 'felony')
-            ]
+                (events['charge_degree'].str.lower() == 'felony')]
             
             if len(person_felony_rearrests) > 0:
                 df.loc[idx, 'y'] = 1
@@ -141,7 +136,7 @@ def create_current_charge_felony(df_arrests):
     For rows that don't have a charge_degree (uncharged arrests), this will be 0.
     
     Args:
-        df_arrests: Dataframe with merged data
+        df_arrests: Merge dataframe
         
     Returns:
         DataFrame: df_arrests with new 'current_charge_felony' column
@@ -222,7 +217,7 @@ def create_num_fel_arrests_last_year(df_arrests, arrest_events_raw):
 
 def print_pred_universe_head(df_arrests):
     """
-    Print the head of the pred_universe portion as requested.
+    Print the head of the pred_universe.
     
     Args:
         df_arrests: Merged dataframe
@@ -257,16 +252,16 @@ def save_preprocessed_data(df_arrests):
         Saves preprocessed dataframe to ./data/df_arrests.csv and prints the shape
 
     """
+
     import os
     # Create data directory if it doesn't exist
     if not os.path.exists('./data'):
         os.makedirs('./data')
     
-    # Save to CSV for use in PART 3
+    # Save to CSV 
     df_arrests.to_csv('./data/df_arrests.csv', index=False)
     print(f"\nPreprocessed data file saved to ./data/df_arrests.csv")
     print(f"  Shape: {df_arrests.shape}")
-    #print(f"  Columns: {list(df_arrests.columns)}")
 
 
 def main():
@@ -284,25 +279,25 @@ def main():
     8. Save preprocessed data for PART 3
     """
     
-    # Step 1: Load data
+    # Load data
     pred_universe_raw, arrest_events_raw = load_data()
     
-    # Step 2: Merge on person_id (as instructed by professor)
+    # Merge on person_id (as instructed by professor)
     df_arrests = merge_on_person_id(pred_universe_raw, arrest_events_raw)
     
-    # Step 3: Create target variable (y) - rearrest for felony within 365 days
+    # Create target variable (y) - rearrest for felony within 365 days
     df_arrests = create_target_variable(df_arrests, arrest_events_raw)
     
-    # Step 4: Create current_charge_felony feature
+    # Create current_charge_felony feature
     df_arrests = create_current_charge_felony(df_arrests)
     
-    # Step 5: Create num_fel_arrests_last_year feature
+    # Create num_fel_arrests_last_year feature
     df_arrests = create_num_fel_arrests_last_year(df_arrests, arrest_events_raw)
     
-    # Step 6: Print pred_universe.head() as requested
+    # Print pred_universe.head() as requested
     print_pred_universe_head(df_arrests)
     
-    # Step 7: Save preprocessed data
+    # Save preprocessed data
     save_preprocessed_data(df_arrests)
     
     print("\n" + "="*50)

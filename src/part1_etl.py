@@ -45,12 +45,6 @@ def save_data():
 
 
     
-
-    
-
-
-
-
 def main():
     """
     This function orchestrates the ETL pipeline by:
@@ -74,7 +68,7 @@ def main():
     print("\nETL/save Completed\n")
 
     print(f"pred_universe_raw: \n{pred_universe_raw.head()}\n\n")
-    print(f"arrest_events_raw: \n{arrest_events_raw.head()}")
+    print(f"arrest_events_raw: \n{arrest_events_raw.head()}\n")
 
 
 # Code below is used to test the script directly

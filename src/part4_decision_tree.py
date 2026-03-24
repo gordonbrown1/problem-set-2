@@ -27,31 +27,6 @@ warnings.filterwarnings('ignore')
 from contextlib import contextmanager
 
 
-"""
-PART 4: Decision Trees
-- Train a decision tree model to predict felony rearrest
-- Use GridSearchCV to tune the max_depth hyperparameter
-- Evaluate on test set and save predictions
-
-
-# Import any further packages you may need for PART 4
-import pandas as pd
-import numpy as np
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.model_selection import StratifiedKFold as KFold_strat
-from sklearn.tree import DecisionTreeClassifier as DTC
-import warnings
-import sys
-import io
-
-# Suppress all Python warnings
-warnings.filterwarnings('ignore')
-
-# Create context manager to suppress stderr
-from contextlib import contextmanager
-
-"""
-
 @contextmanager
 def suppress_stderr():
     """
@@ -78,9 +53,9 @@ def load_data():
     Returns:
         DataFrame: df_arrests with all features and target
     """
+
     print("\nLoading data (df_arrests)...")
     df_arrests = pd.read_csv('./data/df_arrests.csv')
-    #print(f"df_arrests shape: {df_arrests.shape}")
     
     return df_arrests
 
@@ -139,12 +114,12 @@ def train_decision_tree(X_train, y_train):
     Returns:
         tuple: (gs_cv_dt, best_max_depth, best_score)
     """
+
     print("\n" + "="*50)
     print("TRAINING DECISION TREE MODEL")
     print("="*50)
     
     # Create parameter grid with three values for max_depth
-    # max_depth controls tree complexity (smaller = more regularization)
     param_grid_dt = {'max_depth': [3, 5, 7]}
     
     print(f"\nParameter grid:")
@@ -315,26 +290,26 @@ def main():
     print("DECISION TREE")
     print("="*50)
     
-    # Step 1: Load data
+    # Load data
     df_arrests = load_data()
     
-    # Step 2: Create train/test split
+    # Create train/test split
     X_train, X_test, y_train, y_test, df_arrests_train, df_arrests_test = create_train_test_split(df_arrests)
     
-    # Step 3: Train decision tree with hyperparameter tuning
+    # Train decision tree with hyperparameter tuning
     gs_cv_dt, best_max_depth, best_score = train_decision_tree(X_train, y_train)
     
-    # Step 4: Analyze hyperparameter results
+    # Analyze hyperparameter results
     param_grid_dt = {'max_depth': [3, 5, 7]}
     analyze_hyperparameter_results(best_max_depth, param_grid_dt)
     
-    # Step 5: Make predictions on test set
+    # Make predictions on test set
     df_results, y_pred_proba = predict_test_set(gs_cv_dt, X_test, df_arrests, X_test.index, y_test)
     
-    # Step 6: Save results
+    # Save results
     save_results(df_results)
     
-    # Step 7: Evaluate model
+    # Evaluate model
     auc_score, ppv = evaluate_model(gs_cv_dt, X_test, y_test, df_results)
     
     print("\n" + "="*60)

@@ -76,6 +76,7 @@ def main():
             df_results (DataFrame): Results with person_id, features, true labels, and pred_lr
     
     """
+
     print("\n")
     print("="*50)
     print("LOGISTIC REGRESSION")
@@ -88,7 +89,6 @@ def main():
     
     # Create features list (pred_universe is current_charge_felony)
     features = ['current_charge_felony', 'num_fel_arrests_last_year']
-    #print(f"\nFeatures: {features}")
     
     # Prepare X and y
     X = df_arrests[features]
@@ -144,8 +144,8 @@ def main():
     print(f"\nQuestion: Did it have the most or least regularization? Or in the middle?")
     print(f"    Answer: {regularization}")
     
+
     # Predict for the test set with suppressed warnings
-    
     with suppress_stderr():
         y_pred_proba = gs_cv.predict_proba(X_test)[:, 1]
     
@@ -156,7 +156,7 @@ def main():
         'num_fel_arrests_last_year': X_test['num_fel_arrests_last_year'].values,
         'y': y_test.values, 'pred_lr': y_pred_proba,})
     
-    # Save ONLY the results needed for Parts 4 and 5
+    # Save the results 
     df_results.to_csv('./data/lr_predictions.csv', index=False)
     print(f"\nSaved predictions to ./data/lr_predictions.csv")
     print(f"  Shape: {df_results.shape}")

@@ -9,7 +9,6 @@ import part3_logistic_regression
 import part4_decision_tree
 import part5_calibration_plot
 
-
 # Call functions / instanciate objects from the .py files
 def main():
 
@@ -27,7 +26,6 @@ def main():
 
     # PART 5: Call functions/instanciate objects from calibration_plot
     part5_calibration_plot.main()
-
 
 
 if __name__ == "__main__":
