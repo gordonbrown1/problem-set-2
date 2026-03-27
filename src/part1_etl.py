@@ -2,9 +2,6 @@
 PART 1: ETL the two datasets and save each in a folder called `data/` as .csv's
 '''
 
-
-# source venv/bin/activate
-
 import pandas as pd
 import os
 
@@ -16,7 +13,6 @@ pred_universe_raw.drop(columns=['filing_date'], inplace=True)
 arrest_events_raw.drop(columns=['filing_date'], inplace=True)
 
 # Inject and save both data frames to `data/` -> 'pred_universe_raw.csv', 'arrest_events_raw.csv'
-
 def save_data():
     """
     This function creates the ./data directory if it doesn't exist,
@@ -41,7 +37,7 @@ def save_data():
     arrest_events_raw.to_csv('./data/arrest_events_raw.csv', index=False)
 
     print(f"Saved pred_universe_raw.csv with {len(pred_universe_raw)} rows")
-    print(f"Saved pred_universe_raw.csv with {len(arrest_events_raw)} rows")
+    print(f"Saved arrest_events_raw.csv with {len(arrest_events_raw)} rows")
 
 
     
@@ -58,6 +54,7 @@ def main():
         Prints progress information to console
         Triggers file writing via save_data()
     """
+    
     print("\nStarting ETL/saving process...\n")
     print(f"pred_universe_raw shape: {pred_universe_raw.shape}")
     print(f"arrest_events_raw shape: {arrest_events_raw.shape}\n")
